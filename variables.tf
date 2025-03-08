@@ -1,43 +1,3 @@
-variable "dev_center_project_resource_id" {
-  type        = string
-  description = "(Required) The resource ID of the Dev Center project."
-  nullable    = false
-}
-
-variable "location" {
-  type        = string
-  description = "Azure region where the resource should be deployed."
-  nullable    = false
-}
-
-variable "identity_ids" {
-  description = "Specifies a list of user managed identity ids to be assigned to the VM."
-  type        = list(string)
-  default     = []
-}
-
-variable "identity_type" {
-  description = "The Managed Service Identity Type of this Virtual Machine."
-  type        = string
-  default     = ""
-}
-
-variable "name" {
-  type        = string
-  description = "Name of the pool. It needs to be globally unique for each Azure DevOps Organization."
-
-  validation {
-    condition     = can(regex("^[a-zA-Z0-9][a-zA-Z0-9-.]{1,42}[a-zA-Z0-9-]$", var.name))
-    error_message = "The name must be between 3 and 44 characters long, start with an alphanumeric character, end with an alphanumeric character or hyphen, and can only contain alphanumeric characters, hyphens, and dots."
-  }
-}
-
-# This is required for most resource modules
-variable "rg_name" {
-  type        = string
-  description = "The resource group where the resources will be deployed."
-}
-
 variable "agent_profile_grace_period_time_span" {
   type        = string
   default     = null
@@ -206,6 +166,12 @@ DESCRIPTION
   }
 }
 
+variable "dev_center_project_resource_id" {
+  type        = string
+  description = "(Required) The resource ID of the Dev Center project."
+  nullable    = false
+}
+
 variable "fabric_profile_data_disks" {
   type = list(object({
     caching              = optional(string, "ReadWrite")
@@ -288,6 +254,23 @@ variable "fabric_profile_sku_name" {
   description = "The SKU name of the fabric profile, make sure you have enough quota for the SKU, the CPUs are multiplied by the `maximum_concurrency` value, make sure you request enough quota, defaults to 'Standard_D2ads_v5' which has 2 vCPU Cores. so if maximum_concurrency is 2, you will need quota for 4 vCPU Cores and so on."
 }
 
+variable "identity_ids" {
+  description = "Specifies a list of user managed identity ids to be assigned to the VM."
+  type        = list(string)
+  default     = []
+}
+
+variable "identity_type" {
+  description = "The Managed Service Identity Type of this Virtual Machine."
+  type        = string
+  default     = ""
+}
+
+variable "location" {
+  type        = string
+  description = "Azure region where the resource should be deployed."
+  nullable    = false
+}
 
 variable "managed_identities" {
   type = object({
@@ -304,6 +287,13 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "managed_pool_api_version" {
+  type        = string
+  description = "The API version to use for the Managed Pool resource."
+  default     = "Microsoft.DevOpsInfrastructure/pools@2024-10-19"
+
+}
+
 variable "maximum_concurrency" {
   type        = number
   default     = 1
@@ -312,6 +302,16 @@ variable "maximum_concurrency" {
   validation {
     condition     = var.maximum_concurrency >= 1 && var.maximum_concurrency <= 10000
     error_message = "The maximum_concurrency must be between 1 and 10000. Defaults to 10000"
+  }
+}
+
+variable "name" {
+  type        = string
+  description = "Name of the pool. It needs to be globally unique for each Azure DevOps Organization."
+
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9][a-zA-Z0-9-.]{1,42}[a-zA-Z0-9-]$", var.name))
+    error_message = "The name must be between 3 and 44 characters long, start with an alphanumeric character, end with an alphanumeric character or hyphen, and can only contain alphanumeric characters, hyphens, and dots."
   }
 }
 
@@ -327,7 +327,7 @@ variable "organization_profile" {
       kind   = optional(string, "CreatorOnly")
       users  = optional(list(string), null)
       groups = optional(list(string), null)
-    }), {
+      }), {
       kind = "CreatorOnly"
     })
   })
@@ -348,6 +348,11 @@ If not suppled, then `version_control_system_organization_name` and optionally `
   - `users` - (Optional) A list of users for the permission profile, supported value is the `ObjectID` or `UserPrincipalName`. Defaults to `null`.
   - `groups` - (Optional) A list of groups for the permission profile, supported value is the `ObjectID` of the group. Defaults to `null`.
 DESCRIPTION
+}
+
+variable "rg_name" {
+  type        = string
+  description = "The resource group where the resources will be deployed."
 }
 
 variable "subnet_id" {
@@ -372,13 +377,6 @@ variable "version_control_system_organization_name" {
   type        = string
   default     = null
   description = "The name of the version control system organization. This is required if `organization_profile` is not supplied."
-}
-
-variable "managed_pool_api_version" {
-  type = string
-  description = "The API version to use for the Managed Pool resource."
-  default = "Microsoft.DevOpsInfrastructure/pools@2024-10-19"
-
 }
 
 variable "version_control_system_project_names" {
