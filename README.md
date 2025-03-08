@@ -45,7 +45,7 @@ resource "azapi_resource" "managed_devops_pool" {
   }
   location                  = var.location
   name                      = var.name
-  parent_id                 = "/subscriptions/${local.subscription_id}/resourceGroups/${var.rg_name}"
+  parent_id                 = var.rg_id
   schema_validation_enabled = false
   tags                      = var.tags
 
@@ -84,7 +84,6 @@ No requirements.
 | Name | Version |
 |------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | n/a |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
 
 ## Modules
 
@@ -95,7 +94,6 @@ No modules.
 | Name | Type |
 |------|------|
 | [azapi_resource.managed_devops_pool](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
-| [azurerm_client_config.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
 
@@ -117,14 +115,12 @@ No modules.
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | Specifies a list of user managed identity ids to be assigned to the VM. | `list(string)` | `[]` | no |
 | <a name="input_identity_type"></a> [identity\_type](#input\_identity\_type) | The Managed Service Identity Type of this Virtual Machine. | `string` | `""` | no |
 | <a name="input_location"></a> [location](#input\_location) | Azure region where the resource should be deployed. | `string` | n/a | yes |
-| <a name="input_managed_identities"></a> [managed\_identities](#input\_managed\_identities) | Controls the Managed Identity configuration on this resource. The following properties can be specified:<br/><br/>- `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.<br/>- `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource. | <pre>object({<br/>    system_assigned            = optional(bool, false)<br/>    user_assigned_resource_ids = optional(set(string), [])<br/>  })</pre> | `{}` | no |
 | <a name="input_managed_pool_api_version"></a> [managed\_pool\_api\_version](#input\_managed\_pool\_api\_version) | The API version to use for the Managed Pool resource. | `string` | `"Microsoft.DevOpsInfrastructure/pools@2024-10-19"` | no |
 | <a name="input_maximum_concurrency"></a> [maximum\_concurrency](#input\_maximum\_concurrency) | The maximum number of agents that can run concurrently, must be between 1 and 10000, defaults to 1. | `number` | `1` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the pool. It needs to be globally unique for each Azure DevOps Organization. | `string` | n/a | yes |
 | <a name="input_organization_profile"></a> [organization\_profile](#input\_organization\_profile) | An object representing the configuration for an organization profile, including organizations and permission profiles.<br/><br/>This is for advanced use cases where you need to specify permissions and multiple organization.<br/><br/>If not suppled, then `version_control_system_organization_name` and optionally `version_control_system_project_names` must be supplied.<br/><br/>- `organizations` - (Required) A list of objects representing the organizations.<br/>  - `name` - (Required) The name of the organization, without the `https://dev.azure.com/` prefix.<br/>  - `projects` - (Optional) A list of project names this agent should run on. If empty, it will run on all projects. Defaults to `[]`.<br/>  - `parallelism` - (Optional) The parallelism value. If multiple organizations are specified, this value needs to be set and cannot exceed the total value of `maximum_concurrency`; otherwise, it will use the `maximum_concurrency` value as default or the value you define for single Organization.<br/>- `permission_profile` - (Required) An object representing the permission profile.<br/>  - `kind` - (Required) The kind of permission profile, possible values are `CreatorOnly`, `Inherit`, and `SpecificAccounts`, if `SpecificAccounts` is chosen, you must provide a list of users and/or groups.<br/>  - `users` - (Optional) A list of users for the permission profile, supported value is the `ObjectID` or `UserPrincipalName`. Defaults to `null`.<br/>  - `groups` - (Optional) A list of groups for the permission profile, supported value is the `ObjectID` of the group. Defaults to `null`. | <pre>object({<br/>    kind = optional(string, "AzureDevOps")<br/>    organizations = list(object({<br/>      name        = string<br/>      projects    = optional(list(string), []) # List of all Projects names this agent should run on, if empty, it will run on all projects.<br/>      parallelism = optional(number)           # If multiple organizations are specified, this value needs to be set, otherwise it will use the maximum_concurrency value.<br/>    }))<br/>    permission_profile = optional(object({<br/>      kind   = optional(string, "CreatorOnly")<br/>      users  = optional(list(string), null)<br/>      groups = optional(list(string), null)<br/>      }), {<br/>      kind = "CreatorOnly"<br/>    })<br/>  })</pre> | `null` | no |
-| <a name="input_rg_name"></a> [rg\_name](#input\_rg\_name) | The resource group where the resources will be deployed. | `string` | n/a | yes |
+| <a name="input_rg_id"></a> [rg\_id](#input\_rg\_id) | The resource group where the resources will be deployed. | `string` | n/a | yes |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | The virtual network subnet resource id to use for private networking. | `string` | `null` | no |
-| <a name="input_subscription_id"></a> [subscription\_id](#input\_subscription\_id) | The subscription ID to use for the resource. Only required if you want to target a different subscription the the current context. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Tags of the resource. | `map(string)` | `null` | no |
 | <a name="input_version_control_system_organization_name"></a> [version\_control\_system\_organization\_name](#input\_version\_control\_system\_organization\_name) | The name of the version control system organization. This is required if `organization_profile` is not supplied. | `string` | `null` | no |
 | <a name="input_version_control_system_project_names"></a> [version\_control\_system\_project\_names](#input\_version\_control\_system\_project\_names) | The name of the version control system project. This is optional if `organization_profile` is not supplied. | `set(string)` | `[]` | no |
