@@ -272,21 +272,6 @@ variable "location" {
   nullable    = false
 }
 
-variable "managed_identities" {
-  type = object({
-    system_assigned            = optional(bool, false)
-    user_assigned_resource_ids = optional(set(string), [])
-  })
-  default     = {}
-  description = <<DESCRIPTION
-Controls the Managed Identity configuration on this resource. The following properties can be specified:
-
-- `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.
-- `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
-DESCRIPTION
-  nullable    = false
-}
-
 variable "managed_pool_api_version" {
   type        = string
   description = "The API version to use for the Managed Pool resource."
@@ -350,7 +335,7 @@ If not suppled, then `version_control_system_organization_name` and optionally `
 DESCRIPTION
 }
 
-variable "rg_name" {
+variable "rg_id" {
   type        = string
   description = "The resource group where the resources will be deployed."
 }
@@ -359,12 +344,6 @@ variable "subnet_id" {
   type        = string
   default     = null
   description = "The virtual network subnet resource id to use for private networking."
-}
-
-variable "subscription_id" {
-  type        = string
-  default     = null
-  description = "The subscription ID to use for the resource. Only required if you want to target a different subscription the the current context."
 }
 
 variable "tags" {

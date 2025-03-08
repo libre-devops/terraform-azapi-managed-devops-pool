@@ -49,6 +49,5 @@ locals {
     var.agent_profile_resource_prediction_profile == "Manual" ? var.agent_profile_resource_prediction_profile_manual : null
   )
   role_definition_resource_substring = "/providers/Microsoft.Authorization/roleDefinitions"
-  subscription_id                    = coalesce(var.subscription_id, data.azurerm_client_config.this.subscription_id)
   version_control_system_type        = var.organization_profile != null ? var.organization_profile.kind : local.default_organization_profile.kind
 }

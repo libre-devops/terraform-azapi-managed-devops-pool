@@ -121,6 +121,21 @@ module "nsg" {
   }
 }
 
+module "gallery" {
+  source = "libre-devops/compute-gallery/azurerm"
+
+
+  compute_gallery = [
+    {
+      rg_name  = module.rg.rg_name
+      location = module.rg.rg_location
+      tags     = module.rg.rg_tags
+
+      name = local.gallery_name
+    }
+  ]
+}
+
 
 module "dev_centers" {
   source = "../../../terraform-azurerm-dev-center"
@@ -135,17 +150,6 @@ module "dev_centers" {
 
       name = local.dev_center_name
 
-      network_connection = {
-        subnet_id = module.network.subnets_ids[local.dev_center_subnet_name]
-      }
-
-      create_compute_gallery = true
-      compute_gallery = {
-        name     = local.gallery_name
-        rg_name  = module.rg.rg_name
-        location = module.rg.rg_location
-        tags     = module.rg.rg_tags
-      }
       create_project = true
       project = {
         description                = "This is the first Dev Center project."
@@ -168,7 +172,7 @@ module "role_assignments" {
     {
       principal_ids = [azurerm_user_assigned_identity.uid.principal_id]
       role_names    = ["Owner", "Contributor"]
-      scope         = data.azurerm_client_config.current_creds.subscription_id
+      scope         = format("/subscriptions/%s", data.azurerm_client_config.current_creds.subscription_id)
     }
   ]
 }
@@ -179,12 +183,12 @@ module "dev" {
   depends_on = [module.role_assignments]
   source     = "../../"
 
-  rg_name  = module.rg.rg_name
+  rg_id    = module.rg.rg_id
   location = module.rg.rg_location
   tags     = module.rg.rg_tags
 
   name                           = local.devops_managed_pool_name
-  dev_center_project_resource_id = module.dev_centers.dev_center_project[local.dev_center_name].id
+  dev_center_project_resource_id = module.dev_centers.dev_center_project_id[local.dev_center_name]
 
   version_control_system_organization_name = "libredevops"
   version_control_system_project_names     = ["libredevops"]
@@ -211,6 +215,7 @@ No requirements.
 |------|--------|---------|
 | <a name="module_dev"></a> [dev](#module\_dev) | ../../ | n/a |
 | <a name="module_dev_centers"></a> [dev\_centers](#module\_dev\_centers) | ../../../terraform-azurerm-dev-center | n/a |
+| <a name="module_gallery"></a> [gallery](#module\_gallery) | libre-devops/compute-gallery/azurerm | n/a |
 | <a name="module_network"></a> [network](#module\_network) | libre-devops/network/azurerm | n/a |
 | <a name="module_nsg"></a> [nsg](#module\_nsg) | libre-devops/nsg/azurerm | n/a |
 | <a name="module_rg"></a> [rg](#module\_rg) | libre-devops/rg/azurerm | n/a |

@@ -44,7 +44,7 @@ resource "azapi_resource" "managed_devops_pool" {
   }
   location                  = var.location
   name                      = var.name
-  parent_id                 = "/subscriptions/${local.subscription_id}/resourceGroups/${var.rg_name}"
+  parent_id                 = var.rg_id
   schema_validation_enabled = false
   tags                      = var.tags
 
