@@ -49,11 +49,27 @@ resource "azapi_resource" "managed_devops_pool" {
   tags                      = var.tags
 
   dynamic "identity" {
-    for_each = local.managed_identities.system_assigned_user_assigned
-
+    for_each = length(var.identity_ids) == 0 && var.identity_type == "SystemAssigned" ? [var.identity_type] : []
     content {
-      type         = identity.value.type
-      identity_ids = identity.value.user_assigned_resource_ids
+      type = var.identity_type
     }
   }
+
+  dynamic "identity" {
+    for_each = var.identity_type == "UserAssigned" ? [var.identity_type] : []
+    content {
+      type         = var.identity_type
+      identity_ids = length(var.identity_ids) > 0 ? var.identity_ids : []
+    }
+  }
+
+  dynamic "identity" {
+    for_each = var.identity_type == "SystemAssigned, UserAssigned" ? [var.identity_type] : []
+    content {
+      type         = var.identity_type
+      identity_ids = length(var.identity_ids) > 0 ? var.identity_ids : []
+    }
+  }
+
+
 }

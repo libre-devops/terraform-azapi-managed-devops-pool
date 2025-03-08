@@ -10,6 +10,18 @@ variable "location" {
   nullable    = false
 }
 
+variable "identity_ids" {
+  description = "Specifies a list of user managed identity ids to be assigned to the VM."
+  type        = list(string)
+  default     = []
+}
+
+variable "identity_type" {
+  description = "The Managed Service Identity Type of this Virtual Machine."
+  type        = string
+  default     = ""
+}
+
 variable "name" {
   type        = string
   description = "Name of the pool. It needs to be globally unique for each Azure DevOps Organization."

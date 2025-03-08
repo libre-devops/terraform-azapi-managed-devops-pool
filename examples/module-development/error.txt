@@ -1,0 +1,52 @@
+│ Error: Failed to create/update resource
+│
+│   with module.dev.azapi_resource.managed_devops_pool,
+│   on ..\..\main.tf line 1, in resource "azapi_resource" "managed_devops_pool":
+│    1: resource "azapi_resource" "managed_devops_pool" {
+│
+│ creating/updating Resource: (ResourceId
+│ "/subscriptions/df672f48-a7dd-45c3-80bc-01b1786f8ea4/resourceGroups/rg-lbd-uks-prd-02/providers/Microsoft.DevOpsInfrastructure/pools/tst-yaWu"
+│ / Api Version "2024-10-19"): GET
+│ https://management.azure.com/subscriptions/df672f48-a7dd-45c3-80bc-01b1786f8ea4/providers/Microsoft.DevOpsInfrastructure/locations/UKSOUTH/operationStatuses/0d304cbe-6d5e-47a8-9b63-8f63706a24d8*CFC3BEA6BCDB1973BF508491AB5D3E1AD0368B8824BA1F60F892AE4763FE6834
+│ --------------------------------------------------------------------------------
+│ RESPONSE 200: 200 OK
+│ ERROR CODE UNAVAILABLE
+│ --------------------------------------------------------------------------------
+│ {
+│   "id": "/subscriptions/df672f48-a7dd-45c3-80bc-01b1786f8ea4/providers/Microsoft.DevOpsInfrastructure/locations/UKSOUTH/operationStatuses/0d304cbe-6d5e-47a8-9b63-8f63706a24d8*CFC3BEA6BCDB1973BF508491AB5D3E1AD0368B8824BA1F60F892AE4763FE6834",
+│   "name": "0d304cbe-6d5e-47a8-9b63-8f63706a24d8*CFC3BEA6BCDB1973BF508491AB5D3E1AD0368B8824BA1F60F892AE4763FE6834",
+│   "resourceId": "/subscriptions/df672f48-a7dd-45c3-80bc-01b1786f8ea4/resourceGroups/rg-lbd-uks-prd-02/providers/Microsoft.DevOpsInfrastructure/pools/tst-yaWu",
+│   "status": "Failed",
+│   "startTime": "2025-03-08T11:14:30.6303038Z",
+│   "endTime": "2025-03-08T11:14:32.1350721Z",
+│   "error": {
+│     "message": "The request has been completed with result Failed. Please check details with more information.",
+│     "details": [
+│       {
+│         "code": "InvalidDevCenterProjectResourceId",
+│         "message": "Dev Center project resource id /subscriptions/df672f48-a7dd-45c3-80bc-01b1786f8ea4/resourceGroups/rg-lbd-uks-prd-02/providers/Microsoft.DevCenter/devCenters/devc-lbd-uks-prd-01 defined on pool tst-yaWu does not respect the format /subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.DevCenter/projects/projectName.",
+│         "details": [],
+│         "additionalInfo": []
+│       }
+│     ],
+│     "additionalInfo": []
+│   }
+│ }
+│ --------------------------------------------------------------------------------
+│
+╵
+╷
+│ Error: creating Gallery (Subscription: "df672f48-a7dd-45c3-80bc-01b1786f8ea4"
+│ Resource Group Name: "rg-lbd-uks-prd-02"
+│ Dev Center Name: "devc-lbd-uks-prd-01"
+│ Gallery Name: "gallbduksprd01"): performing CreateOrUpdate: unexpected status 400 (400 Bad Request) with error: ValidationError: The request is not valid.
+│
+│   with module.dev_centers.azurerm_dev_center_gallery.galleries["devc-lbd-uks-prd-01"],
+│   on ..\..\..\terraform-azurerm-dev-center\main.tf line 95, in resource "azurerm_dev_center_gallery" "galleries":
+│   95: resource "azurerm_dev_center_gallery" "galleries" {
+│
+│ creating Gallery (Subscription: "df672f48-a7dd-45c3-80bc-01b1786f8ea4"
+│ Resource Group Name: "rg-lbd-uks-prd-02"
+│ Dev Center Name: "devc-lbd-uks-prd-01"
+│ Gallery Name: "gallbduksprd01"): performing CreateOrUpdate: unexpected status 400 (400 Bad Request) with error:
+│ ValidationError: The request is not valid.
