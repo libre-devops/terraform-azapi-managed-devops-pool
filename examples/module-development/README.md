@@ -177,8 +177,39 @@ module "role_assignments" {
   ]
 }
 
+module "images" {
+  source = "registry.terraform.io/libre-devops/compute-gallery-image/azurerm"
 
-module "dev" {
+  rg_name  = module.rg.rg_name
+  location = module.rg.rg_location
+  tags     = module.rg.rg_tags
+
+
+  gallery_name = module.gallery.gallery_name[local.gallery_name]
+  images = [
+    {
+      name                                = "AzDoWindows2022AzureEdition"
+      description                         = "Azure DevOps image based on Windows 2022 Azure Edition image"
+      specialised                         = false
+      hyper_v_generation                  = "V2"
+      os_type                             = "Windows"
+      accelerated_network_support_enabled = true
+      max_recommended_vcpu                = 16
+      min_recommended_vcpu                = 2
+      max_recommended_memory_in_gb        = 32
+      min_recommended_memory_in_gb        = 8
+
+      identifier = {
+        offer     = "Azdo${var.short}${var.env}WindowsServer"
+        publisher = "LibreDevOps"
+        sku       = "AzdoWin2022AzureEdition"
+      }
+    }
+  ]
+}
+
+
+module "devops_managed_pool" {
 
   depends_on = [module.role_assignments]
   source     = "../../"
@@ -186,6 +217,21 @@ module "dev" {
   rg_id    = module.rg.rg_id
   location = module.rg.rg_location
   tags     = module.rg.rg_tags
+
+  fabric_profile_images = [
+    {
+      well_known_image_name = "ubuntu-22.04/latest"
+      aliases = [
+        "ubuntu-22.04/latest"
+      ]
+    },
+    # {
+    #   resource_id = module.images.image_id[0]
+    #     aliases = [
+    #         "AzDoWindows2022AzureEdition"
+    #     ]
+    # }
+  ]
 
   name                           = local.devops_managed_pool_name
   dev_center_project_resource_id = module.dev_centers.dev_center_project_id[local.dev_center_name]
@@ -213,9 +259,10 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_dev"></a> [dev](#module\_dev) | ../../ | n/a |
 | <a name="module_dev_centers"></a> [dev\_centers](#module\_dev\_centers) | ../../../terraform-azurerm-dev-center | n/a |
+| <a name="module_devops_managed_pool"></a> [devops\_managed\_pool](#module\_devops\_managed\_pool) | ../../ | n/a |
 | <a name="module_gallery"></a> [gallery](#module\_gallery) | libre-devops/compute-gallery/azurerm | n/a |
+| <a name="module_images"></a> [images](#module\_images) | registry.terraform.io/libre-devops/compute-gallery-image/azurerm | n/a |
 | <a name="module_network"></a> [network](#module\_network) | libre-devops/network/azurerm | n/a |
 | <a name="module_nsg"></a> [nsg](#module\_nsg) | libre-devops/nsg/azurerm | n/a |
 | <a name="module_rg"></a> [rg](#module\_rg) | libre-devops/rg/azurerm | n/a |
